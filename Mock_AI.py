@@ -1,8 +1,7 @@
-﻿import streamlit as st
+import streamlit as st
 import openai
 import speech_recognition as sr
 from gtts import gTTS
-from playsound import playsound
 import os
 import uuid
 import matplotlib.pyplot as plt
@@ -11,6 +10,10 @@ from colorama import init
 import time
 from threading import Thread
 from dotenv import load_dotenv
+import pygame
+from uuid import uuid4
+
+
 
 
 # Initialize colorama
@@ -125,31 +128,43 @@ with st.sidebar:
 #  TTS with GIF Function
 # ---------------------------
 def speak_with_gif(text, gif_placeholder, animated_gif_path, static_gif_path):
-    """Play sound immediately, delay the GIF animation, and sync with speech."""
     try:
         if st.session_state["mute"]:
             return
 
-        temp_audio_file = f"temp_speech_{uuid.uuid4().hex}.mp3"
+        # Create the audio file
+        temp_audio_file = f"temp_speech_{uuid4().hex}.mp3"
         tts = gTTS(text=text, lang='en')
         tts.save(temp_audio_file)
 
-        def play_audio():
-            playsound(temp_audio_file)
+        # Initialize pygame mixer
+        pygame.mixer.init()
+        pygame.mixer.music.load(temp_audio_file)
+        pygame.mixer.music.play()
 
-        audio_thread = Thread(target=play_audio)
-        audio_thread.start()
-
-        time.sleep(1.5)
+        # Display the animated GIF during playback
+        # time.sleep(1.5)  # Adjust time as necessary
         gif_placeholder.image(animated_gif_path, use_container_width=True)
-        audio_thread.join()
+
+        # Wait for the audio to finish
+        while pygame.mixer.music.get_busy():
+            pygame.time.wait(100)  # Check every 100 milliseconds
 
     except Exception as e:
         st.error(f"❌ Error during playback: {e}")
+
     finally:
+        pygame.mixer.music.stop()
+        pygame.mixer.quit()
         gif_placeholder.image(static_gif_path, use_container_width=True)
-        if os.path.exists(temp_audio_file):
+
+        # Ensure file is no longer used by any process
+        try:
             os.remove(temp_audio_file)
+        except PermissionError:
+            time.sleep(1)  # Wait a bit and try again
+            os.remove(temp_audio_file)
+
 
 # ---------------------------
 #  STT Function
