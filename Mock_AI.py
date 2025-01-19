@@ -12,12 +12,6 @@ from dotenv import load_dotenv
 import pygame
 from uuid import uuid4
 
-
-
-
-# Initialize colorama
-init(autoreset=True)
-
 # ----------------------------
 #  MUST BE FIRST Streamlit call
 # ----------------------------
