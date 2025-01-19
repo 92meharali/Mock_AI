@@ -6,7 +6,6 @@ import os
 import uuid
 import matplotlib.pyplot as plt
 import re
-from colorama import init
 import time
 from threading import Thread
 from dotenv import load_dotenv
