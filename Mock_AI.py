@@ -58,8 +58,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # ----------------------------
 #  Define static and animated GIF/Image Paths
 # ----------------------------
-static_gif_path = r"C:\Users\POWER\source\repos\speach_to_text\speach_to_text\AI-talking-avatar.png"
-animated_gif_path = r"C:\Users\POWER\source\repos\speach_to_text\speach_to_text\AI-talking-avatar.gif"
+static_gif_path = "AI-talking-avatar.png"
+animated_gif_path = "AI-talking-avatar.gif"
 
 # ----------------------------
 #  Speech Recognition & Session
