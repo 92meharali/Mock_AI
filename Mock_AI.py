@@ -121,42 +121,26 @@ with st.sidebar:
 #  TTS with GIF Function
 # ---------------------------
 def speak_with_gif(text, gif_placeholder, animated_gif_path, static_gif_path):
+    """Generate audio file, provide a link to play it."""
     try:
-        if st.session_state["mute"]:
-            return
-
-        # Create the audio file
+        # Generate the TTS audio file
         temp_audio_file = f"temp_speech_{uuid4().hex}.mp3"
         tts = gTTS(text=text, lang='en')
         tts.save(temp_audio_file)
-
-        # Initialize pygame mixer
-        pygame.mixer.init()
-        pygame.mixer.music.load(temp_audio_file)
-        pygame.mixer.music.play()
-
-        # Display the animated GIF during playback
-        # time.sleep(1.5)  # Adjust time as necessary
-        gif_placeholder.image(animated_gif_path, use_container_width=True)
-
-        # Wait for the audio to finish
-        while pygame.mixer.music.get_busy():
-            pygame.time.wait(100)  # Check every 100 milliseconds
+        
+        # Show animated GIF
+        gif_placeholder.image(animated_gif_path, use_column_width=True)
+        
+        # Provide a link to the audio file
+        audio_file_path = os.path.join("audio_files", temp_audio_file)
+        st.audio(audio_file_path, format='audio/mp3', start_time=0)
 
     except Exception as e:
         st.error(f"❌ Error during playback: {e}")
-
     finally:
-        pygame.mixer.music.stop()
-        pygame.mixer.quit()
-        gif_placeholder.image(static_gif_path, use_container_width=True)
-
-        # Ensure file is no longer used by any process
-        try:
-            os.remove(temp_audio_file)
-        except PermissionError:
-            time.sleep(1)  # Wait a bit and try again
-            os.remove(temp_audio_file)
+        # Revert to static image
+        gif_placeholder.image(static_gif_path, use_column_width=True)
+        # Clean up the file later if needed or manage storage
 
 
 # ---------------------------
